@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using System;
+using System.Text;
 
 namespace APIGateway
 {
@@ -24,10 +27,36 @@ namespace APIGateway
 
             OcelotConfiguration = builder.Build();
         }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddAuthentication().AddJwtBearer("products_auth_scheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my_products_api_secret")),
+                    ValidAudience = "productsAudience",
+                    ValidIssuer = "productsIssuer",
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+            }).AddJwtBearer("categories_auth_scheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my_categories_api_secret")),
+                    ValidAudience = "categoriesAudience",
+                    ValidIssuer = "categoriesIssuer",
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+            });
+
             services.AddOcelot(OcelotConfiguration);
 
             services.AddControllers();
@@ -43,6 +72,7 @@ namespace APIGateway
 
             app.UseRouting();
 
+            app.UseAuthorization();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

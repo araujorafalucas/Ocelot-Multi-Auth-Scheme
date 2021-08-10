@@ -9,6 +9,10 @@
           "Port": 5001
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "categories_auth_scheme",
+        "AllowedScopes": []
+      },
       "UpstreamPathTemplate": "/apigateway/categories",
       "UpstreamHttpMethod": [ "Get" ]
     },
@@ -21,6 +25,10 @@
           "Port": 5002
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "products_auth_scheme",
+        "AllowedScopes": []
+      },
       "UpstreamPathTemplate": "/apigateway/products",
       "UpstreamHttpMethod": [ "Get" ]
     }
